@@ -1,0 +1,229 @@
+<html>
+
+<head>
+   <link rel="shortcut icon" href="Position-Relative-Social-1-Ning.ico">
+   <title>PING-PONG</title>
+   <style>
+      body {
+         background-color: #3498DB;
+      }
+
+      button {  
+         width: 60px;
+         height: 60px;
+         background-color: #000;
+         border-radius: 20%;
+         opacity: 0.3;
+         cursor: pointer;
+         color: white;
+         font-size: 30px;
+         font-weight: bold;
+         z-index: 2000;
+         border: 0;
+         user-select: none;
+            user-zoom: none;
+      }
+
+      button:hover {
+         opacity: 0.5;
+      }
+
+      #myCanvas {
+         border-top: 10px double #BA2F16;
+         border-bottom: 6px dashed #45CE30;
+         border-left: 5px solid #BA2F16;
+         border-right: 5px solid #BA2F16;
+      }
+
+      #but1 {
+         position: relative;
+         top: -80px;
+         left: 240px;
+      }
+
+      #but2 {
+         position: relative;
+         top: -80px;
+         right: 240px;
+      }
+
+      #point{
+         position: relative;
+         top: -500px;
+         right: 320px;
+         color: #F22F08;
+      }
+      #title{
+         background-color: #192A56;
+         color: #0A79DF;
+         font-size: 50px;
+         /* margin-top: -10px;
+         margin-left: -10px;
+         margin-right: -10px; */
+      }
+      #info{
+         position: relative;
+         top : -150px;
+         /* float : bottom; */
+         background-color: #192A56;
+         color: #0A79DF;
+         font-size: 25px;
+         text-align: left;
+         margin: 0;
+
+      }
+   </style>
+</head>
+
+<body>
+   <center>
+      <h1 id="title">PING-PONG</h1></center>
+
+   <center>
+      <canvas id="myCanvas" width="700" height="400" style=" background:#FAD02E;">
+</canvas></center>
+   <center>
+      <button type="button" id="but2" onmousedown=" keydownhandlerbuttonl()" onmouseup="keyuphandlerbuttonl()" ontouchstart=" keydownhandlerbuttonl()" ontouchend="keyuphandlerbuttonl()">L</button>
+      <button type="button" id="but1" onmousedown=" keydownhandlerbuttonr()" onmouseup="keyuphandlerbuttonr()"ontouchstart=" keydownhandlerbuttonr()" ontouchend="keyuphandlerbuttonr()">R</button>
+   </center>
+      <div><center><h1><p id="point">000</p></h1></center></div>
+
+   <center><div id="info"><ul>
+      <li>This is just beta game made for learning purposes.</li>
+      <li>Hit The Top Wall To Scorre....</li>
+      <li>If You Miss You Losssssssssss.....!!!</li>
+   </ul></div></center>
+   <script>
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      var x = canvas.width / 2;
+      var y = canvas.height - 30;
+      var ballradius = 10;
+      var dx = 2;
+      var dy = -2;
+      var paddleheight = 10;
+      var paddlewidth = 80;
+      var paddlex = (canvas.width - paddlewidth) / 2;
+      var pdx = 7;
+      var rpressed;
+      var lpressed;
+      var point = 0;
+      function drawball() {
+
+         ctx.beginPath();
+         ctx.arc(x, y, ballradius, 0, 2 * Math.PI);
+         ctx.fillStyle = "#E8290B";
+         ctx.fill();
+
+      }
+
+      function drawpaddle() {
+
+         ctx.beginPath();
+         ctx.rect(paddlex, canvas.height - paddleheight, paddlewidth, paddleheight);
+         ctx.fillStyle = "#58382E";
+         ctx.fill();
+         ctx.closePath();
+      }
+
+      function reload(){
+         x = canvas.width / 2;
+         y = canvas.height - 30;
+         paddlex = (canvas.width - paddlewidth) / 2;
+         point=0;
+      }
+
+      function keydownhandler(event) {
+
+         if (event.keyCode == 39) {
+            rpressed = true;
+         } else if (event.keyCode == 37) {
+            lpressed = true;
+         }
+      }
+
+      function keyuphandler(event) {
+         if (event.keyCode == 39) {
+            rpressed = false;
+         } else if (event.keyCode == 37) {
+            lpressed = false;
+         }
+      }
+
+      function keydownhandlerbuttonr() {
+         rpressed = true;
+      }
+
+      function keydownhandlerbuttonl() {
+         lpressed = true;
+      }
+
+      function keyuphandlerbuttonr() {
+         rpressed = false;
+      }
+
+      function keyuphandlerbuttonl() {
+         lpressed = false;
+      }
+
+      function count(){
+            point++;
+      }
+      function print(){
+         document.getElementById('point'). innerHTML = point;
+      }
+
+      document.addEventListener("keydown", keydownhandler, false);
+      document.addEventListener("keyup", keyuphandler, false);
+
+      function draw() {
+         ctx.clearRect(0, 0, canvas.width, canvas.height);
+         drawball();
+         drawpaddle();
+         if (x + dx > canvas.width - ballradius || x + dx < ballradius) {
+            dx = -dx;
+         }
+         if (y + dy < ballradius) {
+            dy = -dy;
+            count();
+         }
+
+         if (rpressed && (paddlex + paddlewidth) < canvas.width) {
+            paddlex += pdx;
+         } else if (lpressed && paddlex > 0) {
+            paddlex -= pdx;
+         }
+         if (
+            y + dy < ballradius ||
+            (
+               y + dy > canvas.height - paddleheight - ballradius &&
+               x + dx > paddlex &&
+               x + dx < paddlex + paddlewidth
+            )
+         ) {
+            dy = -dy;
+         }
+         //extra added
+         else if (
+            y + dy > canvas.height - ballradius &&
+            x + dx > paddlex - 2 &&
+            x + dx < paddlex + paddlewidth + 2
+         ) {
+            dy = -dy;
+            dx = -dx;
+
+         }
+         else if (y + dy > canvas.height) {
+            reload();
+         }
+         x += dx;
+         y += dy;
+          print();
+         window.requestAnimationFrame(draw);
+      }
+      window.requestAnimationFrame(draw);
+   </script>
+
+</body>
+
+</html>
